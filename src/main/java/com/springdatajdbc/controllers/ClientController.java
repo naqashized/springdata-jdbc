@@ -3,6 +3,7 @@ package com.springdatajdbc.controllers;
 import com.springdatajdbc.dtos.AddClientDTO;
 import com.springdatajdbc.dtos.ClientDTO;
 import com.springdatajdbc.dtos.ResponseDTO;
+import com.springdatajdbc.exceptions.RecordNotFoundException;
 import com.springdatajdbc.services.ClientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,5 +28,10 @@ public class ClientController {
     @GetMapping("/all")
     public List<ClientDTO> getAllClients(){
         return clientService.getAllClients();
+    }
+
+    @GetMapping("/{id}")
+    public ClientDTO getClientById(@PathVariable int id) throws RecordNotFoundException {
+        return clientService.getClientById(id);
     }
 }
