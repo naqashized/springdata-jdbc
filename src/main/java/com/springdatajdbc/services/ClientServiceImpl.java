@@ -2,8 +2,7 @@ package com.springdatajdbc.services;
 
 import com.springdatajdbc.dtos.AddClientDTO;
 import com.springdatajdbc.dtos.ClientDTO;
-import static com.springdatajdbc.dtos.AddClientDTO.AddProjectDTO;
-import static com.springdatajdbc.dtos.ClientDTO.ProjectDTO;
+import com.springdatajdbc.exceptions.RecordNotFoundException;
 import com.springdatajdbc.models.Client;
 import com.springdatajdbc.models.Project;
 import com.springdatajdbc.repositories.ClientRepository;
@@ -13,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.springdatajdbc.dtos.AddClientDTO.AddProjectDTO;
+import static com.springdatajdbc.dtos.ClientDTO.ProjectDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +54,11 @@ public class ClientServiceImpl implements ClientService{
         return projectDTO;
     }
 
+
     @Override
-    public ClientDTO getClientById(int id) {
-        return null;
+    public ClientDTO getClientById(int id) throws RecordNotFoundException {
+        Client client = clientRepository.findById(id).orElseThrow(() -> new RecordNotFoundException("Invalid client id"));
+        List<ProjectDTO> projectDTOList = client.getProjects().stream().map(project -> convertProjectToProjectDTO(project)).collect(Collectors.toList());
+        return new ClientDTO(client.getId(), client.getName(), projectDTOList);
     }
 }
